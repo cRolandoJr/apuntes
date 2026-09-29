@@ -94,38 +94,44 @@ nc -zv -w 3 IP_DESTINO 443
 
 ## 4. Firewall (UFW — Debian/Ubuntu)
 
+> Referencia rápida para diagnóstico. El detalle —modelo de archivos, `limit`, perfiles,
+> IPv6, gotchas— está en [[ufw]].
+
 ```bash
-# Ver estado del firewall
+# Ver estado (¿está filtrando? ¿qué reglas hay?)
 sudo ufw status verbose
+sudo ufw status numbered   # con índice, para poder borrar
 
-# IMPORTANTE: Permitir SSH PRIMERO antes de activar
-sudo ufw allow 22/tcp
-
-# Activar firewall
+# IMPORTANTE: permitir TU puerto SSH antes de activar
+sudo ufw limit 45678/tcp comment 'ssh'   # el que uses; limit = rate-limiting incluido
 sudo ufw enable
 
 # Permitir puertos comunes
-sudo ufw allow 80/tcp      # HTTP
-sudo ufw allow 443/tcp     # HTTPS
-sudo ufw allow 8080/tcp    # App custom
+sudo ufw allow 80/tcp comment 'http'
+sudo ufw allow 443/tcp comment 'https'
 
-# Permitir desde una IP específica
-sudo ufw allow from 192.168.1.100
+# Permitir solo desde una red
+sudo ufw allow from 192.168.1.0/24 to any port 5432 proto tcp
 
-# Bloquear una IP
+# Bloquear un origen
 sudo ufw deny from 203.0.113.50
 
-# Eliminar una regla
-sudo ufw delete allow 80/tcp
+# Eliminar una regla (por índice de `status numbered`)
+sudo ufw delete 2
 
-# Recargar reglas
+# Recargar / desactivar
 sudo ufw reload
-
-# Desactivar firewall
 sudo ufw disable
 ```
 
-> **Regla de supervivencia:** SIEMPRE permitir SSH antes de activar el firewall. Si no, quedás afuera del servidor.
+> **Regla de supervivencia:** permitir el puerto SSH **que estés usando** antes de
+> activar el firewall — `ufw enable` aplica `deny incoming` en el acto y te corta la
+> sesión. Y no uses `ufw allow ssh`: ese perfil es `22/tcp` fijo, así que si moviste el
+> puerto abre el equivocado.
+
+> **Trampa de diagnóstico:** con ufw inactivo, `status verbose` imprime solo
+> `Status: inactive` — **no** lista las reglas ya cargadas. Y `systemctl is-enabled ufw`
+> devuelve `enabled` aunque el firewall esté apagado (es la unit, no la política).
 
 ---
 

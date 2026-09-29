@@ -86,6 +86,26 @@ Cada archivo tiene sección "novato" (cómo lo hace alguien que recién aprende)
 
 ---
 
+## Etapa 7 — Dart/Flutter (Frontend Profesional)
+
+| Archivo                                         | Qué cubre                                                                       |
+| ----------------------------------------------- | ------------------------------------------------------------------------------- |
+| [[00-MOC-Ruta-Dart-Flutter]]                    | Ruta completa para pasar de backend dev a frontend Flutter con criterio tecnico |
+| [[01-Dart-Esencial-para-Backend-Dev]]           | Dart esencial para productividad real                                           |
+| [[02-POO-Funcional-Asincronia-Dart]]            | Modelado, asincronia y manejo de errores                                        |
+| [[03-Flutter-Fundamentos-UI-y-Estado]]          | UI, ciclo de vida, estado y accesibilidad                                       |
+| [[04-Arquitectura-Flutter-MVVM-Clean]]          | Arquitectura escalable MVVM + Clean                                             |
+| [[05-Consumo-GraphQL-y-Capa-Datos]]             | Integracion GraphQL orientada a `gestion_productos`                             |
+| [[06-Navegacion-Formularios-Validacion]]        | Navegacion y formularios robustos                                               |
+| [[07-Testing-Flutter-Unit-Widget-Integration]]  | Testing pragmatico de front                                                     |
+| [[08-Performance-Debugging-Tooling]]            | Rendimiento, debugging y calidad de entrega                                     |
+| [[09-Seguridad-Errores-Observabilidad]]         | Errores, seguridad y observabilidad minima                                      |
+| [[10-Proyecto-Gestion-Productos-Frontend-Plan]] | Plan practico para construir el front                                           |
+| [[11-Habitos-de-Estudio-y-Metodo-Deliberado]]   | Metodo de estudio aplicable mientras trabajas                                   |
+| [[12-Checklist-Mastery-Dart-Flutter]]           | Checklist de dominio real                                                       |
+
+---
+
 ## Extras
 
 | Archivo                   | Qué cubre                                  |
@@ -103,7 +123,8 @@ Etapa-0 (lenguaje)
             ├── Etapa-3 (DB)
             └── Etapa-4 (Testing)
                     ├── Etapa-5 (DevOps)
-                    └── Etapa-6 (Avanzado)
+                    ├── Etapa-6 (Avanzado)
+                    └── Etapa-7 (Dart/Flutter)
 ```
 
 ---
@@ -117,3 +138,4 @@ Etapa-0 (lenguaje)
 - **Etapa 4:** Podés testear cualquier capa sin base de datos ni red real.
 - **Etapa 5:** Podés Dockerizar cualquier app Go y armar un pipeline básico de CI.
 - **Etapa 6:** Podés hablar de trade-offs de arquitectura en una entrevista.
+- **Etapa 7:** Podés construir frontends Flutter mantenibles, consumir GraphQL con criterio, y revisar cambios de IA con fundamento tecnico.

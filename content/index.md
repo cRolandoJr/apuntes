@@ -1,6 +1,7 @@
 # Mi Cerebro Digital
 
-Base de conocimiento técnico personal. Cubre Go, Python, Linux/SysAdmin, DevOps y conceptos de desarrollo. Actualizado: marzo 2026.
+Base de conocimiento técnico personal. Cubre Go, Python, Linux/SysAdmin, DevOps y conceptos de desarrollo. Núcleo escrito marzo 2026.
+
 
 ---
 
@@ -140,6 +141,7 @@ Base de conocimiento técnico personal. Cubre Go, Python, Linux/SysAdmin, DevOps
 - [[Systemd y Procesos|Systemd y Procesos]]
 - [[Systemd.Timers|Systemd Timers]]
 - [[Tar|Tar]]
+- [[ufw|UFW — Firewall]]
 - [[Vim|Vim]]
 
 ---
@@ -160,3 +162,15 @@ Base de conocimiento técnico personal. Cubre Go, Python, Linux/SysAdmin, DevOps
 - [[Prometheus y Grafana|Prometheus y Grafana]]
 - [[Secrets Management|Secrets Management]]
 - [[Terraform|Terraform]]
+
+---
+
+## Developer — Conceptos Generales
+
+- [[Clean Architecture|Clean Architecture]]
+- [[Conceptos|Conceptos]]
+- [[Ejemplos de codigo|Ejemplos de Código]]
+- [[git|Git]]
+- [[Herencia|Herencia]]
+- [[Interfaces implicitas en Go|Interfaces Implícitas en Go]]
+- [[Polimorfismo|Polimorfismo]]

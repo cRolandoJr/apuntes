@@ -22,15 +22,23 @@ ssh-keygen -t ed25519 -C "tu@correo.com"
 
 **Paso 2:** Conectarse una vez más y verificar que no pide contraseña. Luego editar `/etc/ssh/sshd_config` para deshabilitar acceso por contraseña y el login directo como root.
 
-Buscar y descomentar (quitar el `#`) estas líneas:
+Dejar estas dos líneas así (⚠️ no alcanza con "descomentar": el default suele ser
+`#PasswordAuthentication yes` — si solo quitás el `#` queda `yes`, lo contrario de lo
+que querés. Descomentar Y cambiar el valor a `no`):
 
 - `PermitRootLogin no`
 - `PasswordAuthentication no`
 
-**Paso 3:** Recargar el demonio SSH:
+**Paso 2.5:** Probar conexion ssh sin llave/clave al host
 
 ```bash
-systemctl reload sshd
+ssh -o PubkeyAuthentication=no -o PreferredAuthentications=password usuario@ip
+```
+
+**Paso 3:** Recargar el demonio SSH (en Debian/Ubuntu la unidad es `ssh`, `sshd` es alias):
+
+```bash
+sudo systemctl reload ssh
 ```
 
 > **VITAL:** No cerrar la sesión actual. Abrir otra terminal y probar el acceso antes de desconectar. Si la copia de la llave falló, podrías quedar afuera del servidor.
@@ -55,21 +63,77 @@ Buscar `#Port 22`, descomentar y cambiar a un puerto alto (entre 1024 y 65535):
 Port 45678
 ```
 
+> ⚠️ **Si SSH arranca por _socket activation_, quien manda es el socket, no el daemon.**
+> Verificarlo siempre antes de tocar nada — no alcanza con mirar la versión del SO:
+>
+> ```bash
+> systemctl is-active ssh.socket      # active → socket activation en juego
+> systemctl is-enabled ssh.service    # disabled + ssh.socket enabled → confirmado
+> ss -tlnp | grep ssh                 # quién escucha de verdad
+> ```
+>
+> Y hay **dos escenarios distintos**, según exista o no el generador
+> `sshd-socket-generator`:
+>
+> ```bash
+> ls /usr/lib/systemd/system-generators/ | grep ssh
+> ```
+>
+> **Con generador (Ubuntu 24.04, openssh 9.6+):** el generador **lee el `Port` de
+> `sshd_config`** y escribe solo el drop-in del socket en
+> `/run/systemd/generator/ssh.socket.d/addresses.conf`. O sea que editar `sshd_config`
+> **sí funciona** — pero hay que regenerar, no recargar el daemon:
+>
+> ```bash
+> sudo systemctl daemon-reload
+> sudo systemctl restart ssh.socket
+> systemctl show ssh.socket -p Listen   # confirmar que quedó el puerto nuevo
+> ```
+>
+> **Sin generador (Ubuntu 22.10–23.04, Debian 12):** el `Port` de `sshd_config` se
+> ignora y hay que editar el socket a mano:
+>
+> ```bash
+> sudo systemctl edit ssh.socket      # agregar:  [Socket] \n ListenStream= \n ListenStream=45678
+> sudo systemctl daemon-reload && sudo systemctl restart ssh.socket
+> ```
+>
+> (El `ListenStream=` vacío primero limpia el default 22.) Alternativa en ambos casos:
+> volver al modo clásico con
+> `sudo systemctl disable --now ssh.socket && sudo systemctl enable --now ssh.service`.
+>
+> Para saber de dónde sale el puerto que está corriendo, `systemctl cat ssh.socket`
+> muestra el archivo base y todos los drop-ins: si el tuyo aparece bajo
+> `/run/systemd/generator/`, lo puso el generador desde `sshd_config`; si aparece bajo
+> `/etc/systemd/system/`, lo pusiste vos con `systemctl edit`.
+
 ### Paso C: Configurar el Firewall (ANTES de reiniciar SSH)
 
 **Antes** de reiniciar SSH, abrir el nuevo puerto en el firewall. Si no, quedás afuera:
 
-Si usás **UFW**:
+Si usás **UFW** (detalle en [[ufw]]):
 
 ```bash
-sudo ufw allow 45678/tcp
-sudo ufw delete allow 22/tcp
+sudo ufw limit 45678/tcp comment 'ssh'   # limit, no allow: suma rate-limiting
+sudo ufw delete allow 22/tcp             # sacar la vieja, si existía
+sudo ufw status numbered                 # confirmar antes de seguir
 ```
 
-### Paso D: Recargar SSH
+### Paso D: Aplicar el cambio
 
 ```bash
-sudo systemctl reload sshd
+# Sin socket activation (ssh.service habilitado):
+sudo systemctl reload ssh
+
+# Con socket activation (ver Paso B) — reload del daemon NO alcanza:
+sudo systemctl daemon-reload
+sudo systemctl restart ssh.socket
+```
+
+Verificar que quedó escuchando donde esperás **antes** de cerrar la sesión:
+
+```bash
+ss -tlnp | grep 45678
 ```
 
 ### Paso E: Conectarse con el nuevo puerto

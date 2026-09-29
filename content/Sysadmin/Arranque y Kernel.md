@@ -111,7 +111,7 @@ Si el sistema no arranca correctamente:
 1. En el menú de GRUB, presionar `e` para editar la entrada
 2. Buscar la línea que empieza con `linux` o `linux16`
 3. Agregar al final de la línea:
-   - `single` o `1` → Modo single-user (con red)
+   - `single` o `1` → Modo single-user (rescue: SIN red configurada)
    - `systemd.unit=rescue.target` → Modo rescue
    - `systemd.unit=emergency.target` → Modo emergency (mínimo)
    - `init=/bin/bash` → Shell directa (último recurso)

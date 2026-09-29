@@ -21,8 +21,8 @@ htop
 | `F4`        | Filtrar procesos                             |
 | `F5` / `t`  | Vista de árbol (jerarquía padre-hijo)        |
 | `F6` / `>`  | Ordenar por columna (CPU, MEM, etc.)         |
-| `F7` / `]`  | Disminuir prioridad (nice) del proceso       |
-| `F8` / `[`  | Aumentar prioridad (nice) del proceso        |
+| `F7` / `]`  | Subir prioridad — resta al nice (necesita root)  |
+| `F8` / `[`  | Bajar prioridad — suma al nice                   |
 | `F9` / `k`  | Enviar señal (matar) al proceso seleccionado |
 | `F10` / `q` | Salir                                        |
 

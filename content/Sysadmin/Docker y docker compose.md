@@ -25,32 +25,35 @@ Para que Docker vea tanto el `go.mod` como el código en subcarpetas, el `Docker
 
 ### 3. Dockerfile (Ejemplo Go)
 
-```bash
-# 1. Imagen Base (Debe coincidir con la versión de tu go.mod)
-FROM golang:1.25-alpine
+Un Dockerfile Go debe ser **multi-stage**: se compila en una imagen con el toolchain
+(cientos de MB) pero la imagen final solo lleva el binario (MB). Es lo primero que
+preguntan sobre Docker.
 
-# 2. Directorio de trabajo dentro del contenedor
+```dockerfile
+# ── STAGE 1: build (tiene el compilador de Go) ────────────────────────
+FROM golang:1.25-alpine AS build
 WORKDIR /app
 
-# 3. Copiar dependencias primero (aprovecha la caché de Docker)
-COPY go.mod ./
-# COPY go.sum ./
-
-# 4. Descargar librerías
+# Copiar dependencias primero: si no cambian, Docker cachea esta capa
+COPY go.mod go.sum ./          # go.sum SÍ (builds reproducibles), no comentado
 RUN go mod download
 
-# 5. Copiar el resto del código
 COPY . .
+# CGO_ENABLED=0 → binario estático (corre en scratch/distroless sin libc)
+RUN CGO_ENABLED=0 go build -o /gochat ./cmd/gochat
 
-# 6. Compilar (Apuntando a la carpeta donde está el main.go)
-RUN go build -o gochat ./cmd/gochat
-
-# 7. Puerto informativo
+# ── STAGE 2: runtime (imagen final mínima, sin toolchain) ─────────────
+FROM alpine:3.20           # o gcr.io/distroless/static para aún menos superficie
+WORKDIR /app
+COPY --from=build /gochat ./gochat    # solo el binario cruza de stage
 EXPOSE 8080
-
-# 8. Comando de arranque
+# HEALTHCHECK opcional para que Docker sepa si la app está viva
 CMD ["./gochat"]
 ```
+
+> **Por qué importa:** single-stage = imagen de ~350MB con el toolchain de Go dentro
+> (y toda su superficie de ataque). Multi-stage = ~15MB con solo tu binario. Necesitás
+> un `.dockerignore` (excluir `.git`, `node_modules`, etc.) para no mandar basura al build.
 
 ### 4. Docker Compose (`compose.yaml`)
 

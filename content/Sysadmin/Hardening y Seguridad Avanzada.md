@@ -10,8 +10,8 @@ Después de instalar un servidor, hacer como mínimo:
 [x] Actualizar todo: apt update && apt upgrade
 [x] Crear usuario no-root con sudo
 [x] Configurar SSH con clave pública, deshabilitar password y root login
-[x] Configurar firewall (ufw/iptables)
-[x] Instalar fail2ban
+[x] Configurar firewall: regla del puerto SSH PRIMERO, después `ufw enable`
+[x] Instalar fail2ban (banaction = ufw si usás ufw)
 [ ] Configurar actualizaciones automáticas de seguridad
 [ ] Deshabilitar servicios innecesarios
 [ ] Configurar PAM y política de contraseñas
@@ -20,6 +20,11 @@ Después de instalar un servidor, hacer como mínimo:
 [ ] Revisar permisos SUID/SGID
 [ ] Asegurar GRUB con contraseña
 ```
+
+Los tres primeros ítems de seguridad de red tienen nota propia: [[SSH]] (claves y
+puerto), [[ufw]] (firewall) y [[fail2ban]] (baneo por fuerza bruta). El orden entre
+ellos importa: la regla del firewall va **antes** de habilitarlo y **antes** de
+reiniciar SSH en el puerto nuevo, o te quedás afuera del server.
 
 ---
 
@@ -103,7 +108,8 @@ faillock --user nombre_usuario --reset
 # Archivo: /etc/sysctl.d/99-hardening.conf
 
 # --- Red ---
-# Ignorar pings (protección mínima)
+# Responder pings: 0 = responde (default), 1 = ignora todos los ICMP echo.
+# Dejar en 0 salvo que quieras ocultar el host (rompe diagnósticos con ping).
 net.ipv4.icmp_echo_ignore_all = 0
 net.ipv4.icmp_echo_ignore_broadcasts = 1
 
