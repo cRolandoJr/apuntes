@@ -1,3 +1,7 @@
+---
+title: Apuntes
+---
+
 # Mi Cerebro Digital
 
 Base de conocimiento técnico personal. Cubre Go, Python, Linux/SysAdmin, DevOps y conceptos de desarrollo. Núcleo escrito marzo 2026.
