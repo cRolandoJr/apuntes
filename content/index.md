@@ -6,6 +6,8 @@ title: Apuntes
 
 Base de conocimiento técnico personal. Cubre Go, Python, Linux/SysAdmin, DevOps y conceptos de desarrollo. Núcleo escrito marzo 2026.
 
+**Nuevo:** [[Nix-para-DevOps|Nix para DevOps, en castellano]] — la serie que viene.
+
 
 ---
 
